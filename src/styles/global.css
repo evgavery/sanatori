@@ -874,6 +874,73 @@ body.modal-open {
     }
   }
 
+  /* Десктоп — шаги горизонтальной лентой (4 колонки в ряд) */
+  @media (min-width: 1024px) {
+    .tl {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      column-gap: 2.25rem;
+      max-width: none;
+      margin-top: 4.5rem;
+    }
+    /* вертикальная линия в горизонтальном режиме не нужна */
+    .tl::before {
+      display: none;
+    }
+
+    .tl-step {
+      --num-h: 3rem;
+      display: block;
+      padding: 0;
+    }
+
+    .tl-num {
+      display: flex;
+      align-items: flex-end;
+      flex: none;
+      height: var(--num-h);
+      margin: 0;
+      text-align: left;
+      font-size: clamp(2rem, 1.4rem + 1vw, 2.5rem);
+    }
+
+    /* узел встаёт на горизонтальную линию */
+    .tl-dot {
+      position: relative;
+      left: auto;
+      top: auto;
+      display: block;
+      margin: 1.1rem 0 0;
+    }
+
+    /* соединительная линия от узла к следующему */
+    .tl-step::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: calc(var(--num-h) + 1.1rem + 5px);
+      width: calc(100% + 2.25rem);
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        rgba(219, 194, 149, 0.45),
+        rgba(79, 182, 172, 0.3)
+      );
+      z-index: 0;
+    }
+    .tl-step:last-child::after {
+      display: none;
+    }
+
+    .tl-body {
+      padding-left: 0;
+      margin-top: 1.5rem;
+    }
+    .tl-d {
+      max-width: none;
+    }
+  }
+
   /* ============================================================
      Карточки преимуществ (светлая секция)
      ============================================================ */
