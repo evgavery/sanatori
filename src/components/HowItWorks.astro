@@ -1,0 +1,38 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const steps = [
+  { n: '01', title: 'Изучаете санатории', text: 'Смотрите карточки, лечебные профили и услуги по регионам.' },
+  { n: '02', title: 'Оставляете заявку', text: 'Имя, телефон и желаемый санаторий — займёт пару минут.' },
+  { n: '03', title: 'Менеджер связывается', text: 'Уточняет цели поездки и подбирает лучшие варианты.' },
+  { n: '04', title: 'Едете отдыхать', text: 'Помогаем с бронированием и сопровождаем до заселения.' },
+];
+---
+
+<section id="how" class="relative overflow-hidden bg-pine-800 py-20 text-ondark-soft sm:py-28">
+  <div class="how-atmos" aria-hidden="true"></div>
+  <div class="container-px relative">
+    <div class="reveal max-w-2xl">
+      <p class="eyebrow eyebrow-aqua">Как это работает</p>
+      <h2 class="sec-title mt-4 text-h2 text-ondark">Четыре шага до путёвки</h2>
+    </div>
+    <ol class="reveal tl mt-12">
+      {steps.map((s) => (
+        <li class="tl-step">
+          <span class="tl-num" aria-hidden="true">{s.n}</span>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-body">
+            <h3 class="tl-t">{s.title}</h3>
+            <p class="tl-d">{s.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+    <div class="reveal mt-12">
+      <a href="#catalog" class="btn btn-accent btn-lg">
+        Выбрать санаторий
+        <Icon name="lucide:arrow-up" class="h-[18px] w-[18px]" />
+      </a>
+    </div>
+  </div>
+</section>

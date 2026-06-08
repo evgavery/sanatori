@@ -1,0 +1,220 @@
+---
+import { Icon } from 'astro-icon/components';
+import { regions, sanatoriums, bySanatoriumRegion } from '../lib/content';
+import SanatoriumCard from './SanatoriumCard.astro';
+
+const regs = regions();
+const first = regs[0];
+---
+
+<section id="catalog" class="container-px pt-10 pb-20 sm:pt-14 sm:pb-28">
+  <div class="reveal mx-auto max-w-2xl text-center">
+    <p class="eyebrow">Каталог</p>
+    <h2 class="sec-title mt-4 text-h2">Санатории по направлениям</h2>
+    <p class="sec-intro mt-4">Выберите регион — внутри собраны проверенные здравницы.</p>
+  </div>
+
+  <div class="reveal mt-10 flex justify-center">
+    <div class="tabs" role="tablist" aria-label="Регионы">
+      {regs.map((r, i) => (
+        <button type="button" class="tab" role="tab" data-region-tab={r} aria-selected={i === 0 ? 'true' : 'false'}>
+          {r}
+          <span class="count">{bySanatoriumRegion(r).length}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div id="catalog-grid" class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {sanatoriums.map((s) => <SanatoriumCard s={s} hidden={s.region !== first} />)}
+  </div>
+</section>
+
+<!-- Модалка карточки -->
+<dialog id="sanatorium-modal" class="modal" aria-label="Карточка санатория">
+  <div class="modal__inner">
+    <button type="button" class="modal__close" data-close aria-label="Закрыть">
+      <Icon name="lucide:x" class="h-5 w-5" />
+    </button>
+    <div data-modal-body></div>
+  </div>
+</dialog>
+
+<!-- Лайтбокс -->
+<dialog id="lightbox" class="lightbox" aria-label="Просмотр фотографии">
+  <button type="button" class="lightbox__close" data-lb-close aria-label="Закрыть">
+    <Icon name="lucide:x" class="h-6 w-6" />
+  </button>
+  <button type="button" class="lightbox__nav lightbox__prev" data-lb-prev aria-label="Предыдущее фото">
+    <Icon name="lucide:chevron-left" class="h-7 w-7" />
+  </button>
+  <img data-lb-img src="" alt="" />
+  <button type="button" class="lightbox__nav lightbox__next" data-lb-next aria-label="Следующее фото">
+    <Icon name="lucide:chevron-right" class="h-7 w-7" />
+  </button>
+</dialog>
+
+<script>
+  const root = document.getElementById('catalog')!;
+  const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-region-tab]'));
+  const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-card]'));
+
+  function selectRegion(region: string) {
+    for (const t of tabs) t.setAttribute('aria-selected', String(t.dataset.regionTab === region));
+    for (const c of cards) c.hidden = c.dataset.region !== region;
+  }
+  for (const t of tabs) t.addEventListener('click', () => selectRegion(t.dataset.regionTab!));
+
+  // --- Модалка ---
+  const modal = document.getElementById('sanatorium-modal') as HTMLDialogElement;
+  const modalBody = modal.querySelector('[data-modal-body]') as HTMLElement;
+  let lastFocused: HTMLElement | null = null;
+
+  function openModal(card: HTMLElement) {
+    const tpl = card.querySelector('template') as HTMLTemplateElement | null;
+    if (!tpl) return;
+    modalBody.replaceChildren(tpl.content.cloneNode(true));
+    lastFocused = document.activeElement as HTMLElement;
+    document.body.classList.add('modal-open');
+    modal.showModal();
+    modalBody.scrollTop = 0;
+    wireModalActions();
+  }
+  function closeModal() {
+    if (modal.open) modal.close();
+  }
+  modal.addEventListener('close', () => {
+    document.body.classList.remove('modal-open');
+    modalBody.replaceChildren();
+    lastFocused?.focus?.();
+  });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  modal.querySelector('[data-close]')!.addEventListener('click', closeModal);
+
+  // Открыть попап с короткой формой по выбранному санаторию.
+  // Детальную карточку НЕ закрываем — попап встаёт поверх неё (нативный <dialog>).
+  function openLeadModal(name: string) {
+    document.dispatchEvent(new CustomEvent('lead:open', { detail: { sanatorium: name } }));
+  }
+
+  for (const card of cards) {
+    // Открыть модалку можно кликом по телу карточки И по зоне иконок/цены в подвале
+    card.querySelectorAll<HTMLElement>('[data-open]').forEach((el) =>
+      el.addEventListener('click', () => openModal(card)),
+    );
+    const fill = card.querySelector<HTMLElement>('[data-prefill]');
+    fill?.addEventListener('click', () => openLeadModal(fill.dataset.prefill!));
+  }
+
+  // --- Тултипы для иконок на карточках (мгновенные, не нативный title) ---
+  const tip = document.createElement('div');
+  tip.className = 'card-tip';
+  tip.setAttribute('role', 'tooltip');
+  document.body.appendChild(tip);
+  let tipTarget: HTMLElement | null = null;
+
+  function positionTip(el: HTMLElement) {
+    const r = el.getBoundingClientRect();
+    const t = tip.getBoundingClientRect();
+    let left = r.left + r.width / 2 - t.width / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - t.width - 8));
+    let top = r.top - t.height - 8;
+    if (top < 8) top = r.bottom + 8; // если сверху нет места — снизу
+    tip.style.left = `${Math.round(left)}px`;
+    tip.style.top = `${Math.round(top)}px`;
+  }
+  function showTip(el: HTMLElement) {
+    const text = el.dataset.tip;
+    if (!text) return;
+    tip.textContent = text;
+    tip.classList.add('is-visible');
+    positionTip(el);
+  }
+  function hideTip() {
+    tipTarget = null;
+    tip.classList.remove('is-visible');
+  }
+  const grid = document.getElementById('catalog-grid')!;
+  grid.addEventListener('mouseover', (e) => {
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-tip]');
+    if (el && el !== tipTarget) {
+      tipTarget = el;
+      showTip(el);
+    }
+  });
+  grid.addEventListener('mouseout', (e) => {
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-tip]');
+    if (el) hideTip();
+  });
+  window.addEventListener('scroll', hideTip, { passive: true });
+
+  // --- Лайтбокс ---
+  const lb = document.getElementById('lightbox') as HTMLDialogElement;
+  const lbImg = lb.querySelector('[data-lb-img]') as HTMLImageElement;
+  let gallery: string[] = [];
+  let gi = 0;
+
+  function showLb() {
+    const src = gallery[gi];
+    if (src) lbImg.src = src;
+  }
+  function openLightbox(list: string[], index: number) {
+    gallery = list;
+    gi = index;
+    showLb();
+    if (!lb.open) lb.showModal();
+  }
+  lb.querySelector('[data-lb-close]')!.addEventListener('click', () => lb.close());
+  lb.querySelector('[data-lb-prev]')!.addEventListener('click', () => {
+    if (gallery.length) { gi = (gi - 1 + gallery.length) % gallery.length; showLb(); }
+  });
+  lb.querySelector('[data-lb-next]')!.addEventListener('click', () => {
+    if (gallery.length) { gi = (gi + 1) % gallery.length; showLb(); }
+  });
+  lb.addEventListener('click', (e) => {
+    if (e.target === lb) lb.close();
+  });
+
+  // Привязка действий внутри только что открытой модалки
+  function wireModalActions() {
+    const lbBtns = Array.from(modalBody.querySelectorAll<HTMLElement>('[data-lightbox]'));
+    const list = lbBtns.map((b) => b.dataset.src!).filter(Boolean);
+    lbBtns.forEach((b, i) => b.addEventListener('click', () => openLightbox(list, i)));
+
+    const cta = modalBody.querySelector<HTMLElement>('[data-prefill]');
+    cta?.addEventListener('click', () => openLeadModal(cta.dataset.prefill!));
+
+    // Галерея-карусель внутри модалки
+    const gallery = modalBody.querySelector<HTMLElement>('[data-gallery]');
+    if (gallery) {
+      const track = gallery.querySelector<HTMLElement>('[data-track]')!;
+      const count = track.children.length;
+      const dots = Array.from(gallery.querySelectorAll<HTMLElement>('[data-dot]'));
+      let idx = 0;
+      const update = () => {
+        track.style.transform = `translateX(-${idx * 100}%)`;
+        dots.forEach((d, i) => d.setAttribute('aria-current', String(i === idx)));
+      };
+      const go = (next: number) => {
+        idx = (next + count) % count;
+        update();
+      };
+      gallery.querySelector('[data-gallery-prev]')?.addEventListener('click', (e) => { e.stopPropagation(); go(idx - 1); });
+      gallery.querySelector('[data-gallery-next]')?.addEventListener('click', (e) => { e.stopPropagation(); go(idx + 1); });
+      dots.forEach((d, i) => d.addEventListener('click', (e) => { e.stopPropagation(); go(i); }));
+
+      // Свайп на тач-устройствах
+      let x0: number | null = null;
+      gallery.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+      gallery.addEventListener('touchend', (e) => {
+        if (x0 === null) return;
+        const dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
+        x0 = null;
+      });
+      update();
+    }
+  }
+</script>

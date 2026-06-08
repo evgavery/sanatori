@@ -1,0 +1,73 @@
+{
+  "_meta": {
+    "iconSet": "lucide",
+    "fallbackIcon": "circle-check",
+    "note": "Канонический справочник услуг (facilities). Ключ = точная подпись из data/sanatoriums.json. icon = имя иконки Lucide, category = группа для отображения в попапе."
+  },
+  "categories": [
+    "Лечение и вода",
+    "Спорт и активность",
+    "Питание",
+    "Досуг",
+    "Для детей",
+    "Красота и уход",
+    "Услуги",
+    "Инфраструктура"
+  ],
+  "items": {
+    "Бювет": { "icon": "droplet", "category": "Лечение и вода" },
+    "Закрытый бассейн": { "icon": "waves", "category": "Лечение и вода" },
+    "Открытый бассейн": { "icon": "waves", "category": "Лечение и вода" },
+    "Водоём": { "icon": "droplets", "category": "Лечение и вода" },
+    "Сауна": { "icon": "flame", "category": "Лечение и вода" },
+    "Баня": { "icon": "flame", "category": "Лечение и вода" },
+    "Массажное кресло": { "icon": "armchair", "category": "Лечение и вода" },
+    "Пляж": { "icon": "umbrella", "category": "Лечение и вода" },
+
+    "Тренажёрный зал": { "icon": "dumbbell", "category": "Спорт и активность" },
+    "Спортзал": { "icon": "dumbbell", "category": "Спорт и активность" },
+    "Спортплощадка": { "icon": "activity", "category": "Спорт и активность" },
+    "Теннис настольный": { "icon": "activity", "category": "Спорт и активность" },
+    "Теннисный корт": { "icon": "activity", "category": "Спорт и активность" },
+    "Прокат инвентаря": { "icon": "bike", "category": "Спорт и активность" },
+    "Шахматы": { "icon": "gamepad-2", "category": "Спорт и активность" },
+    "Бильярд": { "icon": "target", "category": "Спорт и активность" },
+
+    "Бар": { "icon": "wine", "category": "Питание" },
+    "Фитобар": { "icon": "cup-soda", "category": "Питание" },
+    "Ресторан": { "icon": "utensils", "category": "Питание" },
+    "Кафе": { "icon": "coffee", "category": "Питание" },
+    "Банкетный зал": { "icon": "utensils-crossed", "category": "Питание" },
+
+    "Кинозал": { "icon": "film", "category": "Досуг" },
+    "Библиотека": { "icon": "book-open", "category": "Досуг" },
+    "Читальный зал": { "icon": "book", "category": "Досуг" },
+    "Танцевальный зал": { "icon": "music", "category": "Досуг" },
+    "Экскурсионное бюро": { "icon": "map", "category": "Досуг" },
+    "Зимний сад": { "icon": "flower-2", "category": "Досуг" },
+    "Площадка для шашлыков": { "icon": "flame", "category": "Досуг" },
+    "Конференц-зал": { "icon": "presentation", "category": "Досуг" },
+
+    "Детская площадка": { "icon": "baby", "category": "Для детей" },
+    "Детская комната": { "icon": "blocks", "category": "Для детей" },
+
+    "Салон красоты": { "icon": "scissors", "category": "Красота и уход" },
+    "Косметический салон": { "icon": "sparkles", "category": "Красота и уход" },
+    "Солярий": { "icon": "sun", "category": "Красота и уход" },
+    "Аптека": { "icon": "pill", "category": "Красота и уход" },
+
+    "Прачечная": { "icon": "washing-machine", "category": "Услуги" },
+    "Камера хранения": { "icon": "luggage", "category": "Услуги" },
+    "Гардероб": { "icon": "shirt", "category": "Услуги" },
+    "Касса ж/д авиа билетов": { "icon": "ticket", "category": "Услуги" },
+    "Оплата услуг сотовой связи": { "icon": "smartphone", "category": "Услуги" },
+
+    "Wi-Fi": { "icon": "wifi", "category": "Инфраструктура" },
+    "Автостоянка": { "icon": "car", "category": "Инфраструктура" },
+    "Банкомат": { "icon": "banknote", "category": "Инфраструктура" },
+    "Магазин продуктовый": { "icon": "shopping-cart", "category": "Инфраструктура" },
+    "Магазин промтоваров": { "icon": "shopping-bag", "category": "Инфраструктура" },
+    "Газетный киоск": { "icon": "newspaper", "category": "Инфраструктура" },
+    "Спутниковое ТВ": { "icon": "tv", "category": "Инфраструктура" }
+  }
+}

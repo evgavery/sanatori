@@ -1,0 +1,26 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const items = [
+  { icon: 'shield-check', title: 'Проверенные санатории', text: 'Только аккредитованные здравницы с собственной лечебной базой и репутацией.' },
+  { icon: 'compass', title: 'Помощь с подбором', text: 'Подберём санаторий под ваш профиль лечения, бюджет и удобные даты.' },
+  { icon: 'heart-pulse', title: 'Под разные цели', text: 'Восстановление, лечение, профилактика или просто спокойный отдых.' },
+  { icon: 'headset', title: 'Сопровождение заявки', text: 'Менеджер на связи от выбора санатория до заселения.' },
+];
+---
+
+<section id="advantages" class="container-px pt-20 pb-10 sm:pt-28 sm:pb-14">
+  <div class="reveal mx-auto max-w-2xl text-center">
+    <p class="eyebrow">Преимущества</p>
+    <h2 class="sec-title mt-4 text-h2">Почему выбирают нас</h2>
+  </div>
+  <div class="reveal adv-grid mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    {items.map((i) => (
+      <div class="adv-card">
+        <span class="adv-ic"><Icon name={`lucide:${i.icon}`} /></span>
+        <h3 class="mt-5 text-h3 font-semibold">{i.title}</h3>
+        <p class="mt-2 text-sm leading-relaxed text-muted">{i.text}</p>
+      </div>
+    ))}
+  </div>
+</section>

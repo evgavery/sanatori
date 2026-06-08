@@ -1,0 +1,78 @@
+---
+import { Icon } from 'astro-icon/components';
+import { sanatoriums } from '../lib/content';
+
+// Полная форма заявки одной разметкой — используется и в секции внизу страницы,
+// и в попапе из шапки. Отправку обрабатывает общий контроллер в LeadModal.astro
+// (делегирование по `data-lead-form`), поэтому здесь нет своего <script> и id.
+interface Props {
+  class?: string;
+  // В попапе показываем кнопку «Закрыть» на экране успеха; в секции внизу — нет.
+  closeButton?: boolean;
+}
+const { class: cls = '', closeButton = false } = Astro.props;
+---
+
+<div data-lead-root class={cls}>
+  <form data-lead-form class="grid gap-5" novalidate>
+    <div class="grid gap-5 sm:grid-cols-2">
+      <label class="block">
+        <span class="mb-1.5 block text-sm font-semibold text-ink-soft">Имя <span class="text-error">*</span></span>
+        <input class="control" name="name" type="text" required autocomplete="name" placeholder="Как к вам обращаться" />
+      </label>
+      <label class="block">
+        <span class="mb-1.5 block text-sm font-semibold text-ink-soft">Телефон <span class="text-error">*</span></span>
+        <div class="input-wrap">
+          <span class="prefix">+7</span>
+          <input class="control with-prefix" name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="(900) 000-00-00" />
+        </div>
+      </label>
+    </div>
+
+    <label class="block">
+      <span class="mb-1.5 block text-sm font-semibold text-ink-soft">Желаемый санаторий</span>
+      <select class="control" name="sanatorium" data-lead-sanatorium-select>
+        <option value="">Не выбран — помогите подобрать</option>
+        {sanatoriums.map((s) => <option value={s.name}>{s.name} — {s.city}</option>)}
+      </select>
+    </label>
+
+    <label class="block">
+      <span class="mb-1.5 block text-sm font-semibold text-ink-soft">Комментарий</span>
+      <textarea class="control" name="comment" rows="3" placeholder="Цели поездки, удобные даты, пожелания"></textarea>
+    </label>
+
+    <label class="block">
+      <span class="mb-1.5 block text-sm font-semibold text-ink-soft">Удобный способ связи</span>
+      <select class="control" name="contact_method">
+        <option>Телефонный звонок</option>
+        <option>Telegram</option>
+        <option>WhatsApp</option>
+        <option>Email</option>
+      </select>
+    </label>
+
+    <!-- honeypot (антиспам) -->
+    <input type="text" name="company" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+
+    <label class="check">
+      <input type="checkbox" name="consent" required />
+      <span class="box">
+        <Icon name="lucide:check" class="h-3.5 w-3.5" />
+      </span>
+      <span class="txt">Я согласен на обработку персональных данных в соответствии с <a href={`${import.meta.env.BASE_URL}privacy`}>политикой конфиденциальности</a>.</span>
+    </label>
+
+    <button type="submit" class="btn btn-primary btn-lg mt-1 w-full">Отправить заявку</button>
+    <p class="text-center text-xs text-muted-2">Менеджер свяжется в ближайшее время. Имеются противопоказания — необходима консультация специалиста.</p>
+  </form>
+
+  <div data-lead-success class="hidden rounded-lg bg-success-bg p-8 text-center" style="border:1px solid #bce3cc;">
+    <div class="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-success text-white">
+      <Icon name="lucide:check" class="h-7 w-7" />
+    </div>
+    <p class="font-display text-[1.4rem] font-semibold">Спасибо! Заявка принята</p>
+    <p class="mt-2 text-sm text-ink-soft">Менеджер свяжется с вами в ближайшее время.</p>
+    {closeButton && <button type="button" class="btn btn-primary btn-lg mt-6 w-full" data-lead-close>Закрыть</button>}
+  </div>
+</div>

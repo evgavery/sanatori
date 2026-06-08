@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Политика обработки персональных данных">
+  <main class="container-px py-16 sm:py-20">
+    <a href={import.meta.env.BASE_URL} class="btn-link inline-flex items-center gap-1">← На главную</a>
+    <h1 class="mt-6 text-h1 font-semibold">Политика обработки персональных данных</h1>
+
+    <div class="mt-5 rounded-md border border-sand-300 bg-sand-100 p-4 text-sm text-ink-soft">
+      ⚠️ Черновик-заглушка. Финальный текст согласуем с заказчиком на Этапе 8 (152-ФЗ): оператор,
+      цели обработки, перечень данных, сроки, права субъекта, контакты.
+    </div>
+
+    <div class="mt-8 max-w-3xl space-y-6 text-ink-soft">
+      <section>
+        <h2 class="text-h3 font-semibold">1. Общие положения</h2>
+        <p class="mt-2 text-sm leading-relaxed">
+          Настоящая Политика определяет порядок обработки персональных данных пользователей сайта
+          и меры по обеспечению их безопасности в соответствии с Федеральным законом № 152-ФЗ
+          «О персональных данных». Оператор: <em>уточняется</em> (ИП/ООО, ИНН, ОГРН).
+        </p>
+      </section>
+      <section>
+        <h2 class="text-h3 font-semibold">2. Какие данные обрабатываются</h2>
+        <p class="mt-2 text-sm leading-relaxed">
+          Имя, номер телефона, при необходимости — способ связи и комментарий, переданные через
+          форму заявки. Цель — обработка заявки и связь с пользователем для подбора санатория.
+        </p>
+      </section>
+      <section>
+        <h2 class="text-h3 font-semibold">3. Согласие и права субъекта</h2>
+        <p class="mt-2 text-sm leading-relaxed">
+          Отправляя форму, пользователь подтверждает согласие на обработку персональных данных.
+          Пользователь вправе отозвать согласие, направив обращение по контактам оператора.
+        </p>
+      </section>
+    </div>
+
+    <p class="mt-10 text-xs text-muted-2">Имеются противопоказания. Необходима консультация специалиста.</p>
+  </main>
+</Base>
