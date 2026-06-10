@@ -14,7 +14,11 @@ import csv
 import json
 import os
 import re
+import sys
 from collections import Counter
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from build_photos import ID_TO_SLUG  # карта id → имя папки с фото (единый источник)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "files", "Информация_по_санаториям_от_НК_ТРАНС.csv")
@@ -77,6 +81,31 @@ def apply_fixes(sanatoriums):
         villa["directions"] = list(andzh["directions"])
 
 
+def attach_photos(sanatoriums):
+    """Подтягивает фото из public/photos/<город-название>/ (готовит build_photos.py).
+
+    Имя папки берётся из ID_TO_SLUG (читаемое «город-название», латиницей).
+    Пути в JSON — относительные к base сайта (без ведущего слэша): на рендере
+    к ним добавляется BASE_URL. Если папки/файлов нет — photos остаётся пустым,
+    и карточка показывает фолбэк (градиент + иконка)."""
+    photos_root = os.path.join(ROOT, "public", "photos")
+    missing = []
+    for s in sanatoriums:
+        slug = ID_TO_SLUG.get(s["id"], s["id"])
+        d = os.path.join(photos_root, slug)
+        files = []
+        if os.path.isdir(d):
+            files = sorted(
+                (fn for fn in os.listdir(d) if fn.lower().endswith(".jpg")),
+                key=lambda fn: int(os.path.splitext(fn)[0]) if os.path.splitext(fn)[0].isdigit() else 1_000,
+            )
+        s["photos"] = [f"photos/{slug}/{fn}" for fn in files]
+        if not files:
+            missing.append(s["id"])
+    if missing:
+        print("⚠ Санатории без фото:", ", ".join(missing))
+
+
 def main():
     with open(SRC, newline="", encoding="utf-8") as f:
         rows = list(csv.reader(f))
@@ -121,6 +150,7 @@ def main():
             })
 
     apply_fixes(sanatoriums)
+    attach_photos(sanatoriums)
 
     data = {
         "meta": {
