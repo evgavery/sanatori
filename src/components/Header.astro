@@ -1,14 +1,14 @@
 ---
-import { Icon } from 'astro-icon/components';
 // Фиксированная шапка. По умолчанию — прозрачная поверх hero-видео (светлый текст);
 // при скролле получает класс .is-scrolled: подложка «лён» + backdrop-blur + тёмный текст.
+const base = import.meta.env.BASE_URL;
 ---
 
 <header id="site-header" class="fixed inset-x-0 top-0 z-50 transition-colors duration-300">
   <div class="header-bar container-px flex h-20 items-center justify-between gap-4">
     <a href="#top" class="flex items-center gap-3 font-semibold">
-      <span class="leaf-stone grid h-9 w-9 place-items-center rounded-[11px] text-ondark shadow-pine">
-        <Icon name="lucide:leaf" class="h-5 w-5" />
+      <span class="grid h-11 w-11 place-items-center rounded-lg bg-white shadow-pine">
+        <img src={`${base}logo.svg`} alt="Логотип ФНПР" width="36" height="36" class="h-9 w-9" decoding="async" />
       </span>
       <span class="font-display text-lg leading-none tracking-[-0.01em]">Санатории ФНПР</span>
     </a>
@@ -28,11 +28,6 @@ import { Icon } from 'astro-icon/components';
 </header>
 
 <style>
-  /* Зелёный «камень» под лист — из дизайн-системы */
-  .leaf-stone {
-    background: linear-gradient(150deg, var(--color-pine-600), var(--color-aqua-600));
-  }
-
   /* Состояние по умолчанию — поверх тёмного hero-видео */
   #site-header {
     color: #fff;
