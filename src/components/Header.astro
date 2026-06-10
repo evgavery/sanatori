@@ -18,16 +18,10 @@ import { Icon } from 'astro-icon/components';
       <a href="#how" class="nav-link">Как это работает</a>
     </nav>
     <div class="flex items-center gap-2 sm:gap-3">
-      <div class="header-phones hidden items-center gap-2.5 lg:flex">
-        <Icon name="lucide:phone" class="h-4 w-4 shrink-0" />
-        <div class="flex flex-col">
-          <a href="tel:+79857631398" class="header-phone-num">+7 (985) 763-13-98</a>
-          <a href="tel:+79055949914" class="header-phone-num">+7 (905) 594-99-14</a>
-        </div>
+      <div class="hidden flex-col lg:flex">
+        <a href="tel:+79857631398" class="header-phone-num">+7 (985) 763-13-98</a>
+        <a href="tel:+79055949914" class="header-phone-num">+7 (905) 594-99-14</a>
       </div>
-      <a href="tel:+79857631398" class="header-phone lg:hidden" aria-label="Позвонить: +7 (985) 763-13-98">
-        <Icon name="lucide:phone" class="h-4 w-4 shrink-0" />
-      </a>
       <button type="button" data-lead-open data-lead-variant="full" class="btn btn-primary btn-sm">Оставить заявку</button>
     </div>
   </div>
@@ -63,10 +57,6 @@ import { Icon } from 'astro-icon/components';
   }
 
   /* Телефоны в шапке — наследуют цвет шапки (белый над hero, тёмный при скролле) */
-  .header-phones {
-    color: currentColor;
-    opacity: 0.92;
-  }
   .header-phone-num {
     font-size: 13px;
     font-weight: 600;
@@ -78,27 +68,6 @@ import { Icon } from 'astro-icon/components';
   }
   .header-phone-num:hover {
     opacity: 1;
-  }
-
-  .header-phone {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: currentColor;
-    opacity: 0.9;
-    white-space: nowrap;
-    transition:
-      opacity 0.2s var(--ease-brand),
-      background-color 0.2s var(--ease-brand),
-      color 0.2s var(--ease-brand);
-  }
-  .header-phone:hover {
-    opacity: 1;
-    background-color: rgba(255, 255, 255, 0.14);
   }
 
   /* При скролле — подложка «лён», блюр, тёмный текст */
@@ -117,10 +86,6 @@ import { Icon } from 'astro-icon/components';
     opacity: 1;
   }
   #site-header.is-scrolled .nav-link:hover {
-    color: var(--color-pine-700);
-    background-color: var(--color-pine-50);
-  }
-  #site-header.is-scrolled .header-phone:hover {
     color: var(--color-pine-700);
     background-color: var(--color-pine-50);
   }
