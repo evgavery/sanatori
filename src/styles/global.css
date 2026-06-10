@@ -320,7 +320,10 @@
     padding: 6px;
     background: var(--color-mist);
     border: 1px solid var(--color-line);
-    border-radius: 999px;
+    /* 30px: в один ряд (десктоп) браузер ограничивает радиус до половины высоты —
+       получается пилюля; при переносе на несколько рядов (мобила) это умеренное
+       скругление, внутри которого вкладки-пилюли не вылезают за границу. */
+    border-radius: 30px;
   }
   .tab {
     @apply inline-flex cursor-pointer items-center gap-2 rounded-full font-semibold;
