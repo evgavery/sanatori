@@ -93,14 +93,22 @@ def attach_photos(sanatoriums):
     for s in sanatoriums:
         slug = ID_TO_SLUG.get(s["id"], s["id"])
         d = os.path.join(photos_root, slug)
-        files = []
+        nums = []
+        has_cover = False
         if os.path.isdir(d):
-            files = sorted(
-                (fn for fn in os.listdir(d) if fn.lower().endswith(".jpg")),
-                key=lambda fn: int(os.path.splitext(fn)[0]) if os.path.splitext(fn)[0].isdigit() else 1_000,
-            )
-        s["photos"] = [f"photos/{slug}/{fn}" for fn in files]
-        if not files:
+            for fn in os.listdir(d):
+                stem, ext = os.path.splitext(fn)
+                if ext.lower() != ".jpg":
+                    continue
+                if stem.isdigit():
+                    nums.append(fn)
+                elif stem == "cover":
+                    has_cover = True
+        nums.sort(key=lambda fn: int(os.path.splitext(fn)[0]))
+        # photos — кадры галереи (1.jpg…N.jpg); cover — облегчённая обложка карточки
+        s["photos"] = [f"photos/{slug}/{fn}" for fn in nums]
+        s["cover"] = f"photos/{slug}/cover.jpg" if has_cover else (s["photos"][0] if nums else "")
+        if not nums:
             missing.append(s["id"])
     if missing:
         print("⚠ Санатории без фото:", ", ".join(missing))
@@ -142,6 +150,7 @@ def main():
                 "region": region,
                 "address": clean_ws(addr),
                 "photos": [],
+                "cover": "",
                 "description": clean_ws(desc),
                 "directions": split_directions(prof),
                 "amenities": split_amenities(serv),

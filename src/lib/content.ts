@@ -8,6 +8,7 @@ export interface Sanatorium {
   region: string;
   address: string;
   photos: string[];
+  cover: string;
   description: string;
   directions: string[];
   amenities: string[];
@@ -55,6 +56,18 @@ export function facilityIcon(name: string): string {
 export function photosFor(s: Sanatorium): string[] {
   const base = import.meta.env.BASE_URL;
   return s.photos.map((p) => (/^https?:\/\//.test(p) ? p : base + p));
+}
+
+/**
+ * Обложка для карточки каталога — облегчённая (≈800px) версия первого фото,
+ * чтобы в каталог не грузить полноразмерный кадр (полные 1280px — в галерее).
+ * Фолбэк на первое фото, если отдельной обложки нет.
+ */
+export function coverFor(s: Sanatorium): string {
+  const base = import.meta.env.BASE_URL;
+  const p = s.cover || s.photos[0] || '';
+  if (!p) return '';
+  return /^https?:\/\//.test(p) ? p : base + p;
 }
 
 export function facilityCategory(name: string): string {

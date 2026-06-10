@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { facilityIcon, groupAmenities, photosFor, type Sanatorium } from '../lib/content';
+import { facilityIcon, groupAmenities, photosFor, coverFor, type Sanatorium } from '../lib/content';
 
 interface Props {
   s: Sanatorium;
@@ -16,6 +16,7 @@ const hasPrice = Boolean(s.price_from && s.price_from.trim());
 
 const groups = groupAmenities(s.amenities);
 const photos = photosFor(s);
+const cover = coverFor(s);
 const hasPhoto = photos.length > 0;
 const multiPhoto = photos.length > 1;
 
@@ -45,7 +46,7 @@ const moreLabel = `Ещё ${extraAmenities} ${pluralRu(extraAmenities, 'услу
       </div>
       {hasPhoto && (
         <img
-          src={photos[0]}
+          src={cover}
           alt={s.name}
           loading="lazy"
           decoding="async"
@@ -100,7 +101,7 @@ const moreLabel = `Ещё ${extraAmenities} ${pluralRu(extraAmenities, 'услу
           <div class="gallery-track flex h-full w-full" data-track>
             {photos.map((p, i) => (
               <button type="button" data-lightbox data-src={p} data-index={i} class="h-full w-full shrink-0 cursor-zoom-in">
-                <img src={p} alt={`${s.name} — фото ${i + 1}`} loading="lazy" onerror="this.remove()" class="h-full w-full object-cover" />
+                <img src={p} alt={`${s.name} — фото ${i + 1}`} loading="lazy" decoding="async" onerror="this.remove()" class="h-full w-full object-cover" />
               </button>
             ))}
           </div>

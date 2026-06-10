@@ -12,7 +12,10 @@
   остальные нумерует естественным порядком (2.jpg, 3.jpg, …);
 - приводит все форматы (jpg/jpeg/jfif/webp/JPG) к единому .jpg, ужимает до
   макс. 1280px по большей стороне и пережимает с качеством 80 — чтобы сайт
-  грузился быстро (оригиналы остаются нетронутыми в files/).
+  грузился быстро (оригиналы остаются нетронутыми в files/);
+- дополнительно кладёт cover.jpg — облегчённую обложку (≈800px) для карточки
+  каталога, чтобы не грузить туда полноразмерный кадр (полные 1.jpg…N.jpg
+  используются в галерее/лайтбоксе).
 
 После прогона пересоберите каталог: `python3 scripts/build_sanatoriums.py`
 (он сам подтянет фото из public/photos/ в массив photos каждого санатория).
@@ -28,8 +31,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "files", "Фото санаториев ")  # внимание: пробел в конце имени папки
 OUT = os.path.join(ROOT, "public", "photos")
 
-MAX_SIDE = 1280   # px по большей стороне (меньшие изображения не растягиваем)
-QUALITY = 80      # качество JPEG
+MAX_SIDE = 1280    # px по большей стороне для галереи/лайтбокса (меньшие не растягиваем)
+COVER_SIDE = 800   # px для облегчённой обложки карточки (cover.jpg) — карточка ~380px (×2 retina)
+QUALITY = 80       # качество JPEG
 
 # Путь папки заказчика (относительно SRC) → id санатория из data/sanatoriums.json.
 # «Кирова» встречается и в Железноводске, и в Кисловодске — поэтому ключ полный.
@@ -130,10 +134,10 @@ def max_side(path):
     return max(nums) if nums else 0
 
 
-def convert(src, dst):
+def convert(src, dst, side=MAX_SIDE):
     cmd = ["sips", "-s", "format", "jpeg", "-s", "formatOptions", str(QUALITY)]
-    if max_side(src) > MAX_SIDE:
-        cmd += ["-Z", str(MAX_SIDE)]
+    if max_side(src) > side:
+        cmd += ["-Z", str(side)]
     cmd += [src, "--out", dst]
     subprocess.run(cmd, capture_output=True, check=True)
 
@@ -164,7 +168,15 @@ def main():
         for i, src in enumerate(photos, start=1):
             convert(src, os.path.join(dest_dir, f"{i}.jpg"))
             total_files += 1
-        print(f"  {slug:<30} ← {folder_rel}  ({len(photos)} фото)")
+        # Облегчённая обложка карточки (≈800px) — чтобы в каталог не грузить
+        # полноразмерный кадр; полный 1.jpg остаётся для галереи/лайтбокса.
+        # Делаем только если исходник реально крупнее 800px — иначе обложка
+        # совпала бы с 1.jpg (карточка возьмёт его как фолбэк).
+        cover_note = ""
+        if max_side(photos[0]) > COVER_SIDE:
+            convert(photos[0], os.path.join(dest_dir, "cover.jpg"), side=COVER_SIDE)
+            cover_note = " + обложка"
+        print(f"  {slug:<30} ← {folder_rel}  ({len(photos)} фото{cover_note})")
 
     print(f"\nГотово: {total_files} фото для {len(FOLDER_TO_ID) - len(empty)} санаториев "
           f"→ {os.path.relpath(OUT, ROOT)}")
