@@ -10,7 +10,7 @@ import { Icon } from 'astro-icon/components';
       <span class="leaf-stone grid h-9 w-9 place-items-center rounded-[11px] text-ondark shadow-pine">
         <Icon name="lucide:leaf" class="h-5 w-5" />
       </span>
-      <span class="font-display text-lg leading-none tracking-[-0.01em]">Санатории России</span>
+      <span class="font-display text-lg leading-none tracking-[-0.01em]">Санатории ФНПР</span>
     </a>
     <nav class="hidden items-center gap-1 md:flex">
       <a href="#advantages" class="nav-link">Преимущества</a>
@@ -18,9 +18,15 @@ import { Icon } from 'astro-icon/components';
       <a href="#how" class="nav-link">Как это работает</a>
     </nav>
     <div class="flex items-center gap-2 sm:gap-3">
-      <a href="tel:+70000000000" class="header-phone" aria-label="Позвонить: +7 (000) 000-00-00">
+      <div class="header-phones hidden items-center gap-2.5 lg:flex">
         <Icon name="lucide:phone" class="h-4 w-4 shrink-0" />
-        <span class="hidden whitespace-nowrap lg:inline">+7 (000) 000-00-00</span>
+        <div class="flex flex-col">
+          <a href="tel:+79857631398" class="header-phone-num">+7 (985) 763-13-98</a>
+          <a href="tel:+79055949914" class="header-phone-num">+7 (905) 594-99-14</a>
+        </div>
+      </div>
+      <a href="tel:+79857631398" class="header-phone lg:hidden" aria-label="Позвонить: +7 (985) 763-13-98">
+        <Icon name="lucide:phone" class="h-4 w-4 shrink-0" />
       </a>
       <button type="button" data-lead-open data-lead-variant="full" class="btn btn-primary btn-sm">Оставить заявку</button>
     </div>
@@ -56,7 +62,24 @@ import { Icon } from 'astro-icon/components';
     opacity: 1;
   }
 
-  /* Телефон в шапке — наследует цвет шапки (белый над hero, тёмный при скролле) */
+  /* Телефоны в шапке — наследуют цвет шапки (белый над hero, тёмный при скролле) */
+  .header-phones {
+    color: currentColor;
+    opacity: 0.92;
+  }
+  .header-phone-num {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.45;
+    white-space: nowrap;
+    color: currentColor;
+    opacity: 0.9;
+    transition: opacity 0.2s var(--ease-brand);
+  }
+  .header-phone-num:hover {
+    opacity: 1;
+  }
+
   .header-phone {
     display: inline-flex;
     align-items: center;

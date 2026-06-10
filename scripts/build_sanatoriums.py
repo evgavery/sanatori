@@ -19,7 +19,7 @@ from collections import Counter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "files", "Информация_по_санаториям_от_НК_ТРАНС.csv")
 OUT = os.path.join(ROOT, "data", "sanatoriums.json")
-UPDATED = "2026-06-02"
+UPDATED = "2026-06-10"
 
 CITY_SLUG = {
     "Ессентуки": "essentuki",
@@ -65,6 +65,18 @@ def split_amenities(s):
     return [clean_ws(p) for p in re.split(r"\s{2,}", (s or "").strip()) if clean_ws(p)]
 
 
+def apply_fixes(sanatoriums):
+    """Правки контента поверх исходного CSV (правки заказчика от 10.06.2026)."""
+    by_name = lambda part: next((s for s in sanatoriums if part in s["name"]), None)
+
+    # «Вилла Герман» — корпус санатория им. Анджиевского; в CSV у неё нет
+    # лечебного профиля, по просьбе заказчика дублируем профиль санатория.
+    villa = by_name("Вилла Герман")
+    andzh = by_name("Анджиевского")
+    if villa and andzh and not villa["directions"]:
+        villa["directions"] = list(andzh["directions"])
+
+
 def main():
     with open(SRC, newline="", encoding="utf-8") as f:
         rows = list(csv.reader(f))
@@ -107,6 +119,8 @@ def main():
                 "price_from": "",
                 "cta": "Хочу сюда",
             })
+
+    apply_fixes(sanatoriums)
 
     data = {
         "meta": {
