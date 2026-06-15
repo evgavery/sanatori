@@ -43,7 +43,7 @@ import LeadFields from './LeadFields.astro';
           <span class="txt">Я согласен на обработку персональных данных в соответствии с <a href={`${import.meta.env.BASE_URL}privacy`}>политикой конфиденциальности</a>.</span>
         </label>
 
-        <p data-lead-error hidden class="lead-error">
+        <p data-lead-error hidden role="alert" class="lead-error">
           Не удалось отправить заявку. Попробуйте ещё раз или позвоните <a href="tel:+79857631398">+7&nbsp;(985)&nbsp;763-13-98</a>.
         </p>
 
@@ -167,6 +167,7 @@ import LeadFields from './LeadFields.astro';
     const form = (e.target as HTMLElement).closest?.('[data-lead-form]') as HTMLFormElement | null;
     if (!form) return;
     e.preventDefault();
+    if (form.dataset.submitting) return; // запрос уже в полёте — защита от повторной отправки (Enter)
     if (!form.reportValidity()) return;
     const hp = form.querySelector('input[name="company"]') as HTMLInputElement | null;
     if (hp && hp.value) { showSuccess(form); return; } // honeypot заполнен ботом — имитируем приём
@@ -204,6 +205,7 @@ import LeadFields from './LeadFields.astro';
 
     const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
     const label = btn?.textContent || 'Отправить заявку';
+    form.dataset.submitting = '1';
     if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
     try {
       const res = await fetch(LEAD_ENDPOINT, {
@@ -216,6 +218,8 @@ import LeadFields from './LeadFields.astro';
     } catch {
       if (errBox) errBox.hidden = false;
       if (btn) { btn.disabled = false; btn.textContent = label; }
+    } finally {
+      delete form.dataset.submitting;
     }
   }
 </script>
