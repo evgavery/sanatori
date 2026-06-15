@@ -1,0 +1,92 @@
+---
+// Информационный cookie-баннер (без аналитики — сайт сейчас трекеров не ставит).
+// Запоминает согласие в localStorage и больше не показывается.
+const base = import.meta.env.BASE_URL;
+---
+
+<div
+  id="cookie-notice"
+  class="cookie-notice"
+  role="region"
+  aria-label="Уведомление об использовании cookie"
+  hidden
+>
+  <p class="cookie-notice__text">
+    Мы используем файлы cookie для корректной работы сайта. Продолжая пользоваться сайтом, вы
+    соглашаетесь с этим. Подробнее — в
+    <a href={`${base}privacy`}>Политике обработки персональных данных</a>.
+  </p>
+  <button type="button" class="btn btn-primary btn-sm cookie-notice__btn" data-cookie-accept>
+    Понятно
+  </button>
+</div>
+
+<script>
+  const KEY = 'cookie-consent';
+  const el = document.getElementById('cookie-notice');
+  if (el) {
+    // Стартуем скрытыми и показываем только тем, кто ещё не согласился —
+    // так баннер не мелькает у вернувшихся посетителей.
+    try {
+      if (localStorage.getItem(KEY) !== '1') el.hidden = false;
+    } catch {
+      el.hidden = false;
+    }
+    el.querySelector('[data-cookie-accept]')?.addEventListener('click', () => {
+      try {
+        localStorage.setItem(KEY, '1');
+      } catch {
+        /* приватный режим — просто закрываем */
+      }
+      el.hidden = true;
+    });
+  }
+</script>
+
+<style>
+  .cookie-notice {
+    position: fixed;
+    left: 50%;
+    bottom: clamp(12px, 3vw, 24px);
+    transform: translateX(-50%);
+    z-index: 60;
+    width: min(880px, calc(100vw - 32px));
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 16px 20px;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+  }
+  /* .cookie-notice задаёт display:flex и перебивает UA [hidden]{display:none} — возвращаем явно */
+  .cookie-notice[hidden] {
+    display: none;
+  }
+  .cookie-notice__text {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+  .cookie-notice__text a {
+    color: var(--color-aqua-700);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .cookie-notice__btn {
+    flex: none;
+  }
+  @media (max-width: 560px) {
+    .cookie-notice {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: left;
+      gap: 12px;
+    }
+    .cookie-notice__btn {
+      width: 100%;
+    }
+  }
+</style>

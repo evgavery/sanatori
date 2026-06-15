@@ -64,6 +64,10 @@ const { class: cls = '', closeButton = false } = Astro.props;
       <span class="txt">Я согласен на обработку персональных данных в соответствии с <a href={`${import.meta.env.BASE_URL}privacy`}>политикой конфиденциальности</a>.</span>
     </label>
 
+    <p data-lead-error hidden class="lead-error">
+      Не удалось отправить заявку. Попробуйте ещё раз или позвоните <a href="tel:+79857631398">+7&nbsp;(985)&nbsp;763-13-98</a>.
+    </p>
+
     <button type="submit" class="btn btn-primary btn-lg mt-1 w-full">Отправить заявку</button>
     <p class="text-center text-xs text-muted-2">Менеджер свяжется в ближайшее время. Имеются противопоказания. Необходима консультация специалиста.</p>
   </form>

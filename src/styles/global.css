@@ -404,6 +404,23 @@
     pointer-events: none;
   }
 
+  /* ---------- Сообщение об ошибке отправки заявки ---------- */
+  .lead-error {
+    border-radius: var(--radius-sm);
+    background: var(--color-error-bg);
+    color: var(--color-error);
+    border: 1px solid #e7bcb6;
+    font-size: var(--text-sm);
+    line-height: 1.45;
+    padding: 12px 14px;
+  }
+  .lead-error a {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   /* ---------- Кастомный чекбокс согласия ---------- */
   .check {
     @apply flex cursor-pointer items-start gap-3;

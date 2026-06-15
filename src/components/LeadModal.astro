@@ -43,6 +43,10 @@ import LeadFields from './LeadFields.astro';
           <span class="txt">Я согласен на обработку персональных данных в соответствии с <a href={`${import.meta.env.BASE_URL}privacy`}>политикой конфиденциальности</a>.</span>
         </label>
 
+        <p data-lead-error hidden class="lead-error">
+          Не удалось отправить заявку. Попробуйте ещё раз или позвоните <a href="tel:+79857631398">+7&nbsp;(985)&nbsp;763-13-98</a>.
+        </p>
+
         <button type="submit" class="btn btn-primary btn-lg mt-1 w-full">Отправить заявку</button>
         <p class="text-center text-xs text-muted-2">Менеджер свяжется в ближайшее время. Имеются противопоказания. Необходима консультация специалиста.</p>
       </form>
@@ -79,6 +83,11 @@ import LeadFields from './LeadFields.astro';
   const fullDialog = document.getElementById('lead-modal-full') as HTMLDialogElement;
   const dialogs = [shortDialog, fullDialog].filter(Boolean) as HTMLDialogElement[];
 
+  // Куда уходит заявка. Прослойка (РФ-сервис форм) хранит токен бота/почту и форвардит
+  // заявку в Telegram и/или на email. Адрес задаётся через PUBLIC_LEAD_ENDPOINT (env).
+  // Пока пусто — демо-режим: показываем «успех», но ничего не отправляем (см. submitLead).
+  const LEAD_ENDPOINT = import.meta.env.PUBLIC_LEAD_ENDPOINT || '';
+
   // Привести попап к исходному виду: показать форму, спрятать «спасибо», очистить поля.
   function resetDialog(dialog: HTMLDialogElement) {
     const root = dialog.querySelector('[data-lead-root]');
@@ -87,6 +96,10 @@ import LeadFields from './LeadFields.astro';
     form?.reset();
     form?.classList.remove('hidden');
     root.querySelector('[data-lead-success]')?.classList.add('hidden');
+    // сбросить состояние отправки: спрятать ошибку, вернуть кнопку в исходный вид
+    (form?.querySelector('[data-lead-error]') as HTMLElement | null)?.setAttribute('hidden', '');
+    const submit = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+    if (submit) { submit.disabled = false; submit.textContent = 'Отправить заявку'; }
   }
 
   function openDialog(dialog: HTMLDialogElement, sanatorium?: string) {
@@ -156,8 +169,12 @@ import LeadFields from './LeadFields.astro';
     e.preventDefault();
     if (!form.reportValidity()) return;
     const hp = form.querySelector('input[name="company"]') as HTMLInputElement | null;
-    if (hp && hp.value) return; // спам-бот заполнил honeypot
-    // TODO (Этап 7): отправка заявки в Telegram и/или на email через прослойку.
+    if (hp && hp.value) { showSuccess(form); return; } // honeypot заполнен ботом — имитируем приём
+    void submitLead(form);
+  });
+
+  // Показать экран «Спасибо» вместо формы.
+  function showSuccess(form: HTMLFormElement) {
     const root = form.closest('[data-lead-root]');
     const success = root?.querySelector('[data-lead-success]') as HTMLElement | null;
     form.classList.add('hidden');
@@ -165,5 +182,40 @@ import LeadFields from './LeadFields.astro';
     const inner = form.closest('.modal__inner') as HTMLElement | null;
     if (inner) inner.scrollTop = 0;
     else success?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
+  }
+
+  // Отправка заявки на прослойку. Скрытые служебные поля добавляем здесь, перед POST.
+  async function submitLead(form: HTMLFormElement) {
+    const errBox = form.querySelector('[data-lead-error]') as HTMLElement | null;
+    if (errBox) errBox.hidden = true;
+
+    const fd = new FormData(form);
+    fd.delete('company'); // honeypot не отправляем
+    fd.append('page_url', location.href);
+    fd.append('referrer', document.referrer || '');
+    fd.append('submitted_at', new Date().toISOString());
+
+    // Endpoint не настроен → демо-режим (для презентации): «успех» без реальной отправки.
+    if (!LEAD_ENDPOINT) {
+      console.warn('[lead] PUBLIC_LEAD_ENDPOINT не задан — заявка не отправлена (демо-режим).');
+      showSuccess(form);
+      return;
+    }
+
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+    const label = btn?.textContent || 'Отправить заявку';
+    if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
+    try {
+      const res = await fetch(LEAD_ENDPOINT, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: fd,
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      showSuccess(form);
+    } catch {
+      if (errBox) errBox.hidden = false;
+      if (btn) { btn.disabled = false; btn.textContent = label; }
+    }
+  }
 </script>
