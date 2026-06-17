@@ -5,12 +5,32 @@ import CookieNotice from '../components/CookieNotice.astro';
 interface Props {
   title?: string;
   description?: string;
+  /** Картинка для шаринга (относительно сайта). 1200×630, JPG/PNG. */
+  ogImage?: string;
+  /** JSON-LD блоки (произвольные структуры — будут сериализованы в <script type="application/ld+json">). */
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
 
+const SITE_NAME = 'Санатории ФНПР';
+const DEFAULT_DESCRIPTION =
+  'Уникальные природные лечебные факторы, современные медицинские программы и безупречный сервис в санаториях Кавказских Минеральных Вод, Балтийского побережья и Сочи. Оставьте заявку — поможем подобрать.';
+
 const {
-  title = 'Санатории ФНПР',
-  description = 'Уникальные природные лечебные факторы, современные медицинские программы и безупречный сервис в санаториях Кавказских Минеральных Вод, Балтийского побережья и Сочи. Оставьте заявку — поможем подобрать.',
+  title,
+  description = DEFAULT_DESCRIPTION,
+  ogImage = '/og-cover.jpg',
+  jsonLd,
 } = Astro.props;
+
+// Полный <title>: «X — Санатории ФНПР», на главной — только название сайта с тэглайном.
+const fullTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — подбор санаторно-курортного отдыха по России`;
+
+const base = import.meta.env.BASE_URL;
+// Полный URL текущей страницы (используется в canonical и og:url).
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImageUrl = new URL(ogImage, Astro.site).toString();
+
+const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
 <!doctype html>
@@ -18,18 +38,46 @@ const {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#14271e" />
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.ico`} sizes="any" type="image/x-icon" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${SITE_NAME} — подбор санаторно-курортного отдыха`} />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Иконки. SVG и PNG заказчик пришлёт; ICO уже на месте, остальное — мягкие 404 у браузеров. -->
+    <link rel="icon" href={`${base}favicon.ico`} sizes="any" type="image/x-icon" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} sizes="180x180" />
+    <link rel="manifest" href={`${base}site.webmanifest`} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
       rel="stylesheet"
     />
+
+    {jsonLdBlocks.map((data) => (
+      <script type="application/ld+json" set:html={JSON.stringify(data)} />
+    ))}
   </head>
   <body>
     <slot />

@@ -8,9 +8,65 @@ import HowItWorks from '../components/HowItWorks.astro';
 import LeadForm from '../components/LeadForm.astro';
 import LeadModal from '../components/LeadModal.astro';
 import Footer from '../components/Footer.astro';
+
+const siteUrl = Astro.site!.toString().replace(/\/$/, '');
+
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Санатории ФНПР',
+  legalName: 'ООО «ИН ТРАНС-ТУР»',
+  url: `${siteUrl}/`,
+  logo: `${siteUrl}/logo.svg`,
+  image: `${siteUrl}/og-cover.jpg`,
+  description:
+    'Подбор санаторно-курортного отдыха по проверенным здравницам России — Кавказские Минеральные Воды, Балтика, Сочи.',
+  taxID: '7708307232',
+  vatID: '7708307232',
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'RU',
+    addressLocality: 'Москва',
+    postalCode: '107140',
+    streetAddress: 'ул. Краснопрудная, 22-24, стр. 1',
+  },
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      telephone: '+7-985-763-13-98',
+      contactType: 'customer service',
+      areaServed: 'RU',
+      availableLanguage: 'Russian',
+    },
+    {
+      '@type': 'ContactPoint',
+      telephone: '+7-905-594-99-14',
+      contactType: 'customer service',
+      areaServed: 'RU',
+      availableLanguage: 'Russian',
+    },
+    {
+      '@type': 'ContactPoint',
+      telephone: '+7-495-369-17-71',
+      email: 'info@nktrans-group.ru',
+      contactType: 'office',
+      areaServed: 'RU',
+      availableLanguage: 'Russian',
+    },
+  ],
+};
+
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Санатории ФНПР',
+  url: `${siteUrl}/`,
+  inLanguage: 'ru-RU',
+  publisher: { '@type': 'Organization', name: 'ООО «ИН ТРАНС-ТУР»' },
+};
 ---
 
-<Base>
+<Base jsonLd={[orgLd, websiteLd]}>
   <Header />
   <Hero />
   <Advantages />

@@ -10,6 +10,7 @@
     "content": "python3 scripts/build_sanatoriums.py"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@iconify-json/lucide": "^1.2.111",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^5.18.2",

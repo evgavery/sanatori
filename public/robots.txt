@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Не индексируем серверный обработчик заявок
+Disallow: /lead.php
+
+Sitemap: https://xn--80aayawdelfebp4a.xn--p1ai/sitemap-index.xml
+Host: xn--80aayawdelfebp4a.xn--p1ai

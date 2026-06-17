@@ -1,0 +1,17 @@
+{
+  "name": "Санатории ФНПР",
+  "short_name": "Санатории ФНПР",
+  "description": "Подбор санаторно-курортного отдыха по проверенным здравницам России.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#f7f3ec",
+  "theme_color": "#14271e",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
