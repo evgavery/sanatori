@@ -1,6 +1,9 @@
 ---
 import { Icon } from 'astro-icon/components';
 const base = import.meta.env.BASE_URL;
+// Cache-bust для hero-видео и постера: меняем при каждой замене файлов,
+// иначе у вернувшихся пользователей mp4 сидит в браузерном кеше до 45 дней.
+const heroVer = '2';
 ---
 
 <section id="top" class="relative flex h-[100svh] flex-col overflow-hidden">
@@ -13,9 +16,9 @@ const base = import.meta.env.BASE_URL;
       loop
       playsinline
       preload="metadata"
-      poster={`${base}video/hero-poster.jpg`}
+      poster={`${base}video/hero-poster.jpg?v=${heroVer}`}
     >
-      <source src={`${base}video/hero.mp4`} type="video/mp4" />
+      <source src={`${base}video/hero.mp4?v=${heroVer}`} type="video/mp4" />
     </video>
     <!-- Затемнение поверх видео (из дизайн-системы): прозрачный → тёмный лес -->
     <div class="hero-overlay absolute inset-0"></div>
