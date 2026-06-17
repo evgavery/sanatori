@@ -1,20 +1,8 @@
-# Apache на reg.ru (Host-Lite). Файл попадает в dist/ при сборке и выкладывается в public_html.
-# Назначение: HTTPS, без www, gzip-сжатие, агрессивный кеш для статики, SPA-friendly 404.
+# Apache на reg.ru (Host-Lite). Файл попадает в dist/ при сборке и выкладывается в веб-рут.
+# HTTPS-форс делает reg.ru на уровне панели; www→без www тоже настраивается там.
+# Здесь — gzip, кеш, security-хедеры, 404.
 
-# ─── 1. Принудительный HTTPS + редирект www → без www ──────────────────────────
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-
-  # HTTP → HTTPS
-  RewriteCond %{HTTPS} off
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-  # www.* → без www (на обоих именах: punycode и кириллическом)
-  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
-</IfModule>
-
-# ─── 2. Gzip-сжатие текстовых ресурсов ─────────────────────────────────────────
+# ─── 1. Gzip-сжатие текстовых ресурсов ─────────────────────────────────────────
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
   AddOutputFilterByType DEFLATE application/javascript application/x-javascript
@@ -22,7 +10,7 @@
   AddOutputFilterByType DEFLATE image/svg+xml font/woff font/woff2
 </IfModule>
 
-# ─── 3. Кеш-хедеры ──────────────────────────────────────────────────────────────
+# ─── 2. Кеш-хедеры ──────────────────────────────────────────────────────────────
 <IfModule mod_expires.c>
   ExpiresActive On
 
@@ -30,7 +18,7 @@
   ExpiresByType text/html "access plus 5 minutes"
   ExpiresByType application/manifest+json "access plus 1 day"
 
-  # Статика с хешем в имени (Astro кладёт в /_astro/) — на год
+  # Статика — на полгода/год
   ExpiresByType text/css "access plus 1 year"
   ExpiresByType application/javascript "access plus 1 year"
   ExpiresByType image/jpeg "access plus 6 months"
@@ -60,10 +48,8 @@
   Header set X-Frame-Options "SAMEORIGIN"
 </IfModule>
 
-# ─── 4. Кодировка по умолчанию ─────────────────────────────────────────────────
+# ─── 3. Кодировка по умолчанию ─────────────────────────────────────────────────
 AddDefaultCharset UTF-8
 
-# ─── 5. 404 → index.html отдаём НЕ нужно: сайт многостраничный (Astro SSG).
-# Astro сам сгенерирует privacy/index.html, остальное → стандартная 404 от Astro
-# (если был сгенерирован /404.html) или Apache.
+# ─── 4. 404 ────────────────────────────────────────────────────────────────────
 ErrorDocument 404 /404.html
