@@ -3,7 +3,7 @@ import { Icon } from 'astro-icon/components';
 const base = import.meta.env.BASE_URL;
 // Cache-bust для hero-видео и постера: меняем при каждой замене файлов,
 // иначе у вернувшихся пользователей mp4 сидит в браузерном кеше до 45 дней.
-const heroVer = '3';
+const heroVer = '4';
 ---
 
 <section id="top" class="relative flex h-[100svh] flex-col overflow-hidden">
@@ -31,7 +31,7 @@ const heroVer = '3';
       <h1 class="font-display text-[clamp(2.5rem,1.7rem+3vw,3.75rem)] font-semibold leading-[1.08]">
         Санатории <em class="font-medium italic text-sand-300">Федерации Независимых Профсоюзов</em> России
       </h1>
-      <p class="mt-6 max-w-xl text-lead text-ondark-soft lg:max-w-3xl">
+      <p class="mt-6 max-w-xl text-lead font-semibold text-ondark lg:max-w-3xl">
         Откройте для себя уникальные природные лечебные факторы, современные медицинские программы
         и безупречный сервис в санаториях Кавказских Минеральных Вод, Балтийского побережья
         и города-курорта Сочи.

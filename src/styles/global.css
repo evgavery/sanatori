@@ -177,7 +177,7 @@
     @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full font-bold no-underline;
     font-size: var(--text-sm);
     line-height: 1;
-    padding: 14px 26px;
+    padding: 15px 30px;
     border: 1.5px solid transparent;
     transition:
       transform 0.18s var(--ease-brand),
@@ -187,14 +187,14 @@
       color 0.2s var(--ease-brand);
   }
   .btn-primary {
-    background: var(--color-pine-600);
+    background: #2a7d52;
     color: var(--color-ondark);
-    box-shadow: var(--shadow-pine);
+    box-shadow: 0 14px 30px -12px rgba(42, 125, 82, 0.45);
   }
   .btn-primary:hover {
-    background: var(--color-pine-700);
+    background: #236843;
     transform: translateY(-2px);
-    box-shadow: 0 20px 38px -14px rgba(41, 80, 63, 0.5);
+    box-shadow: 0 20px 38px -14px rgba(42, 125, 82, 0.55);
   }
   .btn-accent {
     background: var(--color-aqua-500);
