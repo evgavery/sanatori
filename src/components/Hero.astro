@@ -8,9 +8,13 @@ const heroVer = '4';
 
 <section id="top" class="relative flex h-[100svh] flex-col overflow-hidden">
   <!-- Фоновое видео + затемнение -->
-  <div class="absolute inset-0 -z-10">
+  <!-- Чтобы стык лупа не «дёргался»: за ~0.5с до конца видео плавно гаснет
+       в тёмный фон контейнера (bg ниже) и так же плавно проявляется после
+       рестарта. Сглаживанием управляет короткий скрипт ниже; если JS не
+       выполнится — остаётся нативный loop (как было). -->
+  <div class="absolute inset-0 -z-10 bg-[#14271e]" data-hero-media>
     <video
-      class="h-full w-full object-cover"
+      class="hero-video absolute inset-0 h-full w-full object-cover"
       autoplay
       muted
       loop
@@ -47,6 +51,10 @@ const heroVer = '4';
 </section>
 
 <style>
+  .hero-video {
+    /* длительность совпадает с FADE в скрипте */
+    transition: opacity 0.5s linear;
+  }
   .hero-overlay {
     background: linear-gradient(
       180deg,
@@ -56,3 +64,17 @@ const heroVer = '4';
     );
   }
 </style>
+
+<script>
+  // Сглаживаем стык нативного лупа: у конца гасим видео в тёмный фон,
+  // после рестарта (currentTime ~0) проявляем обратно. Плавность — CSS-transition.
+  const FADE = 0.5; // сек — должно совпадать с transition в .hero-video
+  document
+    .querySelectorAll<HTMLVideoElement>('[data-hero-media] video')
+    .forEach((v) => {
+      v.addEventListener('timeupdate', () => {
+        if (!v.duration) return;
+        v.style.opacity = v.duration - v.currentTime < FADE ? '0' : '1';
+      });
+    });
+</script>
